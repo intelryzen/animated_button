@@ -1,6 +1,7 @@
 library animated_button;
 
 import 'package:flutter/material.dart';
+import 'package:gaimon/gaimon.dart';
 
 /// Using [ShadowDegree] with values [ShadowDegree.dark] or [ShadowDegree.light]
 /// to get a darker version of the used color.
@@ -10,7 +11,7 @@ class AnimatedButton extends StatefulWidget {
   final Color color;
   final Widget child;
   final bool enabled;
-  final double width;
+  final double? width;
   final int duration;
   final double height;
   final Color disabledColor;
@@ -23,7 +24,7 @@ class AnimatedButton extends StatefulWidget {
     required this.child,
     required this.onPressed,
     this.height = 40,
-    this.width = 140,
+    this.width,
     this.duration = 70,
     this.enabled = true,
     this.borderRadius = 12,
@@ -65,6 +66,9 @@ class _AnimatedButtonState extends State<AnimatedButton> {
                       : darken(widget.disabledColor, widget.shadowDegree),
                   borderRadius: _getBorderRadius(),
                 ),
+                child: widget.width == null
+                    ? Opacity(opacity: 0, child: widget.child)
+                    : null,
               ),
             ),
             AnimatedPositioned(
@@ -91,6 +95,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
   }
 
   void _pressed(_) {
+    Gaimon.selection();
     setState(() {
       _position = 0;
     });
