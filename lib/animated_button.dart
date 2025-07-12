@@ -18,6 +18,7 @@ class AnimatedButton extends StatefulWidget {
   final double borderRadius;
   final VoidCallback onPressed;
   final ShadowDegree shadowDegree;
+  final bool hasBorder;
 
   const AnimatedButton({
     Key? key,
@@ -31,6 +32,7 @@ class AnimatedButton extends StatefulWidget {
     this.color = Colors.blue,
     this.disabledColor = Colors.grey,
     this.shadowDegree = ShadowDegree.light,
+    this.hasBorder = false,
   }) : super(key: key);
 
   @override
@@ -84,6 +86,15 @@ class _AnimatedButtonState extends State<AnimatedButton> {
                 decoration: BoxDecoration(
                   color: widget.enabled ? widget.color : widget.disabledColor,
                   borderRadius: _getBorderRadius(),
+                  border: widget.hasBorder
+                      ? Border.all(
+                          color: widget.enabled
+                              ? darken(widget.color, widget.shadowDegree)
+                              : darken(
+                                  widget.disabledColor, widget.shadowDegree),
+                          width: 1,
+                        )
+                      : null,
                 ),
                 child: Center(child: widget.child),
               ),
@@ -144,7 +155,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
 
       if (buttonRect.contains(localPosition)) {
         _onPressed();
-      } 
+      }
     }
   }
 
