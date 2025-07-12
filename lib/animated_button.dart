@@ -49,6 +49,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
   @override
   Widget build(BuildContext context) {
     final double _height = widget.height - _shadowHeight;
+    final bool isWidthInfinite = widget.width == double.infinity;
 
     return GestureDetector(
       key: _buttonKey,
@@ -62,6 +63,8 @@ class _AnimatedButtonState extends State<AnimatedButton> {
             // width is necessary for bottom shadow
             Positioned(
               bottom: 0,
+              left: isWidthInfinite ? 0 : null,
+              right: isWidthInfinite ? 0 : null,
               child: Container(
                 height: _height,
                 width: widget.width,
@@ -80,6 +83,8 @@ class _AnimatedButtonState extends State<AnimatedButton> {
               curve: _curve,
               duration: Duration(milliseconds: widget.duration),
               bottom: _position,
+              left: isWidthInfinite ? 0 : null,
+              right: isWidthInfinite ? 0 : null,
               child: Container(
                 height: _height,
                 width: widget.width,
