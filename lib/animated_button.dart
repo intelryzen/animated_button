@@ -40,6 +40,8 @@ class AnimatedButton extends StatefulWidget {
 class _AnimatedButtonState extends State<AnimatedButton> {
   static const Curve _curve = Curves.easeIn;
   static const double _shadowHeight = 4;
+  final GlobalKey _buttonKey = GlobalKey();
+
   double _position = 4;
 
   @override
@@ -47,6 +49,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
     final double _height = widget.height - _shadowHeight;
 
     return GestureDetector(
+      key: _buttonKey,
       // width here is required for centering the button in parent
       child: Container(
         width: widget.width,
@@ -89,8 +92,9 @@ class _AnimatedButtonState extends State<AnimatedButton> {
         ),
       ),
       onTapDown: widget.enabled ? _pressed : null,
-      onTapUp: widget.enabled ? _unPressedOnTapUp : null,
-      onTapCancel: widget.enabled ? _unPressed : null,
+      onTapUp: widget.enabled ? _onTapUp : null,
+      onPanUpdate: widget.enabled ? _onPanUpdate : null,
+      onPanEnd: widget.enabled ? _onPanEnd : null,
     );
   }
 
@@ -101,13 +105,47 @@ class _AnimatedButtonState extends State<AnimatedButton> {
     });
   }
 
-  void _unPressedOnTapUp(_) => _unPressed();
+  void _onTapUp(_) => _onPressed();
 
-  void _unPressed() {
+  void _onPressed() {
     setState(() {
       _position = 4;
     });
     widget.onPressed();
+  }
+
+  void _onPanUpdate(DragUpdateDetails details) {
+    final RenderBox? renderBox =
+        _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final localPosition = renderBox.globalToLocal(details.globalPosition);
+      final buttonRect =
+          Rect.fromLTWH(0, 0, renderBox.size.width, renderBox.size.height);
+
+      if (!buttonRect.contains(localPosition)) {
+        setState(() {
+          _position = 4;
+        });
+      } else {
+        setState(() {
+          _position = 0;
+        });
+      }
+    }
+  }
+
+  void _onPanEnd(DragEndDetails details) {
+    final RenderBox? renderBox =
+        _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      final localPosition = renderBox.globalToLocal(details.globalPosition);
+      final buttonRect =
+          Rect.fromLTWH(0, 0, renderBox.size.width, renderBox.size.height);
+
+      if (buttonRect.contains(localPosition)) {
+        _onPressed();
+      } 
+    }
   }
 
   BorderRadius? _getBorderRadius() {
