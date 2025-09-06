@@ -172,7 +172,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
 // Get a darker color from any entered color.
 // Thanks to @NearHuscarl on StackOverflow
 Color darken(Color color, ShadowDegree degree) {
-  double amount = degree == ShadowDegree.dark ? 0.3 : 0.12;
+  double amount = degree == ShadowDegree.dark ? 0.15 : 0.12;
   final hsl = HSLColor.fromColor(color);
   final hslDark = hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0));
 
