@@ -107,10 +107,20 @@ class _AnimatedButtonState extends State<AnimatedButton> {
           ],
         ),
       ),
+      onLongPressEnd:
+          widget.enabled ? (details) => _onEnd(details.globalPosition) : null,
+      onLongPressCancel: widget.enabled
+          ? () {
+              setState(() {
+                _position = 4;
+              });
+            }
+          : null,
       onTapDown: widget.enabled ? _pressed : null,
       onTapUp: widget.enabled ? _onTapUp : null,
       onPanUpdate: widget.enabled ? _onPanUpdate : null,
-      onPanEnd: widget.enabled ? _onPanEnd : null,
+      onPanEnd:
+          widget.enabled ? (details) => _onEnd(details.globalPosition) : null,
     );
   }
 
@@ -150,16 +160,20 @@ class _AnimatedButtonState extends State<AnimatedButton> {
     }
   }
 
-  void _onPanEnd(DragEndDetails details) {
+  void _onEnd(Offset globalPosition) {
     final RenderBox? renderBox =
         _buttonKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox != null) {
-      final localPosition = renderBox.globalToLocal(details.globalPosition);
+      final localPosition = renderBox.globalToLocal(globalPosition);
       final buttonRect =
           Rect.fromLTWH(0, 0, renderBox.size.width, renderBox.size.height);
 
       if (buttonRect.contains(localPosition)) {
         _onPressed();
+      } else {
+        setState(() {
+          _position = 4;
+        });
       }
     }
   }
