@@ -63,7 +63,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
     return GestureDetector(
       key: _buttonKey,
       // width here is required for centering the button in parent
-      child: Container(
+      child: SizedBox(
         width: widget.width,
         height: _height + _shadowHeight,
         child: Stack(
@@ -79,6 +79,12 @@ class _AnimatedButtonState extends State<AnimatedButton> {
                     ? darken(widget.color, widget.shadowDegree)
                     : darken(widget.disabledColor, widget.shadowDegree),
                 borderRadius: _getBorderRadius(),
+                border: widget.hasBorder
+                    ? Border.all(
+                        color: Colors.transparent,
+                        width: 1,
+                      )
+                    : null,
               ),
               child: widget.width == null
                   ? Opacity(opacity: 0, child: child)
