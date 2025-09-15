@@ -19,6 +19,7 @@ class AnimatedButton extends StatefulWidget {
   final VoidCallback onPressed;
   final ShadowDegree shadowDegree;
   final bool hasBorder;
+  final double minWidth;
 
   const AnimatedButton({
     Key? key,
@@ -33,6 +34,7 @@ class AnimatedButton extends StatefulWidget {
     this.disabledColor = Colors.grey,
     this.shadowDegree = ShadowDegree.light,
     this.hasBorder = false,
+    this.minWidth = 0,
   }) : super(key: key);
 
   @override
@@ -51,6 +53,13 @@ class _AnimatedButtonState extends State<AnimatedButton> {
     final double _height = widget.height - _shadowHeight;
     final bool isWidthInfinite = widget.width == double.infinity;
 
+    final child = widget.width == null && widget.minWidth > 0
+        ? ConstrainedBox(
+            constraints: BoxConstraints(minWidth: widget.minWidth),
+            child: widget.child,
+          )
+        : widget.child;
+
     return GestureDetector(
       key: _buttonKey,
       // width here is required for centering the button in parent
@@ -58,26 +67,22 @@ class _AnimatedButtonState extends State<AnimatedButton> {
         width: widget.width,
         height: _height + _shadowHeight,
         child: Stack(
+          alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
             // background shadow serves as drop shadow
             // width is necessary for bottom shadow
-            Positioned(
-              bottom: 0,
-              left: isWidthInfinite ? 0 : null,
-              right: isWidthInfinite ? 0 : null,
-              child: Container(
-                height: _height,
-                width: widget.width,
-                decoration: BoxDecoration(
-                  color: widget.enabled
-                      ? darken(widget.color, widget.shadowDegree)
-                      : darken(widget.disabledColor, widget.shadowDegree),
-                  borderRadius: _getBorderRadius(),
-                ),
-                child: widget.width == null
-                    ? Opacity(opacity: 0, child: widget.child)
-                    : null,
+            Container(
+              height: _height,
+              width: widget.width,
+              decoration: BoxDecoration(
+                color: widget.enabled
+                    ? darken(widget.color, widget.shadowDegree)
+                    : darken(widget.disabledColor, widget.shadowDegree),
+                borderRadius: _getBorderRadius(),
               ),
+              child: widget.width == null
+                  ? Opacity(opacity: 0, child: child)
+                  : null,
             ),
             AnimatedPositioned(
               curve: _curve,
@@ -101,7 +106,7 @@ class _AnimatedButtonState extends State<AnimatedButton> {
                         )
                       : null,
                 ),
-                child: Center(child: widget.child),
+                child: Center(child: child),
               ),
             ),
           ],
